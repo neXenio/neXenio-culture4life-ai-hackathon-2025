@@ -1,0 +1,8 @@
+*patch
+tmp0
+lib
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
