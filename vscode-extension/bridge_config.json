@@ -2,11 +2,8 @@
   "mcpServers": {
     "filesystem": {
       "command": "node",
-      "args": [
-        "/Users/mica/nexenio/hkton/starter/hackathon-ai-template/filesystem/dist/index.js",
-        "."
-      ],
-      "allowedDirectory": "/Users/mica/nexenio/hkton/starter/hackathon-ai-template"
+      "args": ["path/to/your/repo/filesystem/dist/index.js", "."],
+      "allowedDirectory": "path/to/your/repo"
     }
   },
   "llm": {
