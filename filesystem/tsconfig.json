@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext", // Overridden by child
+    "moduleResolution": "NodeNext", // Overridden by child
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist", // Added by child
+    "rootDir": ".", // Added by child
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "./**/*.ts" // Replaces parent's include
+  ],
+  "exclude": [
+    "node_modules" // Inherited from parent
+  ]
+}
