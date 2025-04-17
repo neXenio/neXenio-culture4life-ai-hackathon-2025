@@ -235,4 +235,39 @@ export async function MCPanalyzeFunctionComment(
   } catch (error: any) {
     logger.error(`Fatal error: ${error?.message || String(error)}`);
   }
+}
+
+/**
+ * Analyzes a file's comments and identifies redundant ones
+ * 
+ * @param fileContent The content of the file to analyze
+ * @returns A JSON string with the analysis result including removedComments and modifiedCode
+ */
+export async function analyzeRedundantComments(
+  fileContent: string
+): Promise<string | undefined> {
+  const prompt = `You are an API that returns responses in a JSON format. Only respond with JSON, and nothing else.
+  Analyze the following code and identify comments that are redundant and should be removed.
+  A comment is redundant if:
+  1. It simply repeats what the code already clearly expresses
+  2. It contains outdated or incorrect information
+  3. It states the obvious that any programmer would know
+  
+  Here is the code to analyze:
+  
+  ${fileContent}
+  
+  Return a JSON with:
+  {
+    "removedComments": [line_numbers_of_comments_to_remove],
+    "modifiedCode": "code with redundant comments removed"
+  }`;
+
+  try {
+    const response = await MCPanalyzeFunctionComment(prompt);
+    return response;
+  } catch (error) {
+    logger.error(`Error analyzing redundant comments: ${error}`);
+    return undefined;
+  }
 } 

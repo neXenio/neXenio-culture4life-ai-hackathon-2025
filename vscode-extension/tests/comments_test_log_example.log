@@ -1,0 +1,52 @@
+
+vscode-extension/tests/comments-test.py::test_comments_are_fewer 
+---------------------------------------------- live log call -----------------------------------------------
+INFO     comments-test:comments-test.py:61 Starting test_comments_are_fewer
+DEBUG    comments-test:comments-test.py:103 Checking if test file exists: vscode-extension/assets/comments/legacyFeature.ts
+INFO     comments-test:comments-test.py:107 Counting initial comments
+DEBUG    comments-test:comments-test.py:49 Extracting comments from vscode-extension/assets/comments/legacyFeature.ts
+DEBUG    comments-test:comments-test.py:54 Found 19 comments
+DEBUG    comments-test:comments-test.py:56 Comment 1: // This file contains legacy features
+DEBUG    comments-test:comments-test.py:56 Comment 2: // We're using a mock DataService for testing
+DEBUG    comments-test:comments-test.py:56 Comment 3: // Class for managing user accounts
+DEBUG    comments-test:comments-test.py:56 Comment 4: // Constructor for UserManager
+DEBUG    comments-test:comments-test.py:56 Comment 5: // Initialize dataService
+DEBUG    comments-test:comments-test.py:56 Comment 6: // Gets a user by ID
+DEBUG    comments-test:comments-test.py:56 Comment 7: // Returns the user object
+DEBUG    comments-test:comments-test.py:56 Comment 8: // Call the data service to get user
+DEBUG    comments-test:comments-test.py:56 Comment 9: // This function was updated in v2.0
+DEBUG    comments-test:comments-test.py:56 Comment 10: // It now handles both email and username login
+DEBUG    comments-test:comments-test.py:56 Comment 11: // Check if credential is email or username
+DEBUG    comments-test:comments-test.py:56 Comment 12: // Get user by either email or username
+DEBUG    comments-test:comments-test.py:56 Comment 13: // Updates user profile
+DEBUG    comments-test:comments-test.py:56 Comment 14: // The fields parameter is an object with the fields to update
+DEBUG    comments-test:comments-test.py:56 Comment 15: // Update user profile
+DEBUG    comments-test:comments-test.py:56 Comment 16: // Deletes a user account
+DEBUG    comments-test:comments-test.py:56 Comment 17: // This is a permanent action and cannot be undone
+DEBUG    comments-test:comments-test.py:56 Comment 18: // This function deletes the user
+DEBUG    comments-test:comments-test.py:56 Comment 19: // Export the UserManager class
+INFO     comments-test:comments-test.py:109 Initial comment count: 19
+DEBUG    comments-test:comments-test.py:114 Creating copy of test file: vscode-extension/assets/comments/legacyFeature.ts.tmp
+DEBUG    comments-test:comments-test.py:118 Reading content from: vscode-extension/assets/comments/legacyFeature.ts.tmp
+INFO     comments-test:comments-test.py:123 Creating mock analysis result
+INFO     comments-test:comments-test.py:138 Comparing comment counts
+DEBUG    comments-test:comments-test.py:49 Extracting comments from vscode-extension/assets/comments/legacyFeature.ts.tmp
+DEBUG    comments-test:comments-test.py:54 Found 13 comments
+DEBUG    comments-test:comments-test.py:56 Comment 1: // This file contains legacy features
+DEBUG    comments-test:comments-test.py:56 Comment 2: // We're using a mock DataService for testing
+DEBUG    comments-test:comments-test.py:56 Comment 3: // Class for managing user accounts
+DEBUG    comments-test:comments-test.py:56 Comment 4: // Constructor for UserManager
+DEBUG    comments-test:comments-test.py:56 Comment 5: // Gets a user by ID
+DEBUG    comments-test:comments-test.py:56 Comment 6: // Returns the user object
+DEBUG    comments-test:comments-test.py:56 Comment 7: // This function was updated in v2.0
+DEBUG    comments-test:comments-test.py:56 Comment 8: // It now handles both email and username login
+DEBUG    comments-test:comments-test.py:56 Comment 9: // Check if credential is email or username
+DEBUG    comments-test:comments-test.py:56 Comment 10: // Updates user profile
+DEBUG    comments-test:comments-test.py:56 Comment 11: // The fields parameter is an object with the fields to update
+DEBUG    comments-test:comments-test.py:56 Comment 12: // Deletes a user account
+DEBUG    comments-test:comments-test.py:56 Comment 13: // This is a permanent action and cannot be undone
+INFO     comments-test:comments-test.py:140 New comment count: 13
+INFO     comments-test:comments-test.py:146 Successfully removed 6 comments
+DEBUG    comments-test:comments-test.py:152 Removing temporary file: vscode-extension/assets/comments/legacyFeature.ts.tmp
+INFO     comments-test:comments-test.py:155 Test completed
+PASSED                                                                                               [100%]
