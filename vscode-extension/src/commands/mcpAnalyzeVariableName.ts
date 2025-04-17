@@ -84,22 +84,21 @@ function findVariableMatch(
  */
 export async function analyzeVariableName(
   document: vscode.TextDocument,
-  variableMatch: RegExpMatchArray,
-  currentLine: number
-): Promise<string | null> {
-  const prompt = preparePrompt(document, variableMatch, currentLine);
+  variableMatch?: RegExpMatchArray,
+  currentLine?: number
+): Promise<any | null> {
+  const prompt = preparePrompt(document);
 
   // Initialize the Ollama client.
   try {
     const response = await MCPanalyzeVariableName(prompt);
 
-    // Log and parse the JSON output.
     console.log("Response from LLM:", response);
     if (!response) {
       throw new Error("Empty response from LLM");
     }
     const result = JSON.parse(response);
-    return result.suggestion || null;
+    return result || null;
   } catch (error) {
     vscode.window.showErrorMessage(`Error analyzing variable name: ${error}`);
     return null;
@@ -115,37 +114,20 @@ export async function analyzeVariableName(
  * @param currentLine - The line number where the variable is declared.
  * @returns The prepared prompt string.
  */
-function preparePrompt(
-  document: vscode.TextDocument,
-  variableMatch: RegExpMatchArray,
-  currentLine: number
-): string {
-  const variableName = variableMatch[2];
-  const variableValue = variableMatch[3].trim();
-
-  // Gather context: previous 20 lines (or up to the beginning of the document)
-  const contextStartLine = Math.max(0, currentLine - 20);
-  const contextLines: string[] = [];
-  for (let i = contextStartLine; i <= currentLine; i++) {
-    contextLines.push(document.lineAt(i).text);
-  }
-  const contextText = contextLines.join("\n");
+function preparePrompt(document: vscode.TextDocument): string {
+  // Gather context: all the document text
 
   return `You are an API that returns responses in a JSON format. Only respond with JSON, and nothing else.
-  Based on the variable {variable} below and the previous 20 lines of code on the context {context}, and the allowed dir files you have, also understanding that this is a vscode extension MCP project, analyze if the variable name semantically represents what value the variable is carrying and suggest a new name if not. The object should only return the new suggested variable name if the previous name is bad.
-  
-  {variable}
-  content: ${variableName}
-  Value: ${variableValue}
+  Based on the context {context}, and the allowed dir files you have, also analyze if comments are redundant or unnecessary.
   
   {context}
-  ${contextText}
+  ${document.getText()}
   
   Do not output anything else other than the JSON object:
   [
     {
       text: "Your thoughts on the refactoring",
-      range: { start: number, end: number }, 
+      range: { start: {line: number}, end: {line:number} },
       severity: 'warning' | 'error',
 }]`;
 }
