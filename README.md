@@ -47,5 +47,18 @@ Welcome to our one-day hackathon focused on building **AI-powered developer tool
 
 1. **Clone the repo**
 2. **Create your team branch:**
+
    ```bash
    git checkout -b team-alpha/variable-namer
+
+
+## Our ToDos for the Gherkin Review Assistant
+
+### Goal
+
+Build a tool that does a Gherkin review and checks Gherkin files for best practices.
+
+1. define best practices to check
+    1. try out different prompts to get results of individual best practice revies steps
+2. build own VSCode command to trigger review of file
+    1. find out how to use other .feature files as context

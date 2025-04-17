@@ -19,6 +19,10 @@
       {
         "command": "ollama-vscode-ext-template.ollama-analyze-variable-name",
         "title": "Ollama: Analyze Variable Name"
+      },
+      {
+        "command": "ollama-vscode-ext-template.mcp-review_gherkin",
+        "title": "MCP: Review Gherkin"
       }
     ],
     "menus": {
@@ -30,6 +34,11 @@
         },
         {
           "command": "ollama-vscode-ext-template.ollama-analyze-variable-name",
+          "when": "editorTextFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "ollama-vscode-ext-template.mcp-review_gherkin",
           "when": "editorTextFocus",
           "group": "navigation"
         }
