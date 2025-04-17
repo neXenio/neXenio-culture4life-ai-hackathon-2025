@@ -135,14 +135,19 @@ function preparePrompt(
   Based on the variable {variable} below and the previous 20 lines of code on the context {context}, and the allowed dir files you have, also understanding that this is a vscode extension MCP project, analyze if the variable name semantically represents what value the variable is carrying and suggest a new name if not. The object should only return the new suggested variable name if the previous name is bad.
   
   {variable}
-  Name: ${variableName}
+  content: ${variableName}
   Value: ${variableValue}
   
   {context}
   ${contextText}
   
   Do not output anything else other than the JSON object:
-  {"suggestion": string | null }`;
+  [
+    {
+      text: "Your thoughts on the refactoring",
+      range: { start: number, end: number }, 
+      severity: 'warning' | 'error',
+}]`;
 }
 
 /**
