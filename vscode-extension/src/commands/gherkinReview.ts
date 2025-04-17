@@ -48,7 +48,7 @@ export async function mcpHandleReviewGherkinCommand(): Promise<void> {
  */
 export async function reviewGherkin(
   document: vscode.TextDocument,
-): Promise<string | null> {
+): Promise<{line: number, "actual text": string, "suggested text": string}[] | null> {
   const prompt = preparePrompt(document);
 
   // Initialize the Ollama client.
@@ -61,7 +61,7 @@ export async function reviewGherkin(
       throw new Error("Empty response from LLM");
     }
     const result = JSON.parse(response);
-    return result.suggestion || null;
+    return result || null;
   } catch (error) {
     vscode.window.showErrorMessage(`Error analyzing variable name: ${error}`);
     return null;
