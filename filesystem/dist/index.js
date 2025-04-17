@@ -4,11 +4,11 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { CallToolRequestSchema, ListToolsRequestSchema, ToolSchema, } from "@modelcontextprotocol/sdk/types.js";
 import fs from "fs/promises";
 import path from "path";
-import os from 'os';
+import os from "os";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { createTwoFilesPatch } from 'diff';
-import { minimatch } from 'minimatch';
+import { createTwoFilesPatch } from "diff";
+import { minimatch } from "minimatch";
 // Command line argument parsing
 const args = process.argv.slice(2);
 if (args.length === 0) {
@@ -20,13 +20,13 @@ function normalizePath(p) {
     return path.normalize(p);
 }
 function expandHome(filepath) {
-    if (filepath.startsWith('~/') || filepath === '~') {
+    if (filepath.startsWith("~/") || filepath === "~") {
         return path.join(os.homedir(), filepath.slice(1));
     }
     return filepath;
 }
 // Store allowed directories in normalized form
-const allowedDirectories = args.map(dir => normalizePath(path.resolve(expandHome(dir))));
+const allowedDirectories = args.map((dir) => normalizePath(path.resolve(expandHome(dir))));
 // Validate that all directories exist and are accessible
 await Promise.all(args.map(async (dir) => {
     try {
@@ -49,15 +49,15 @@ async function validatePath(requestedPath) {
         : path.resolve(process.cwd(), expandedPath);
     const normalizedRequested = normalizePath(absolute);
     // Check if path is within allowed directories
-    const isAllowed = allowedDirectories.some(dir => normalizedRequested.startsWith(dir));
+    const isAllowed = allowedDirectories.some((dir) => normalizedRequested.startsWith(dir));
     if (!isAllowed) {
-        throw new Error(`Access denied - path outside allowed directories: ${absolute} not in ${allowedDirectories.join(', ')}`);
+        throw new Error(`Access denied - path outside allowed directories: ${absolute} not in ${allowedDirectories.join(", ")}`);
     }
     // Handle symlinks by checking their real path
     try {
         const realPath = await fs.realpath(absolute);
         const normalizedReal = normalizePath(realPath);
-        const isRealPathAllowed = allowedDirectories.some(dir => normalizedReal.startsWith(dir));
+        const isRealPathAllowed = allowedDirectories.some((dir) => normalizedReal.startsWith(dir));
         if (!isRealPathAllowed) {
             throw new Error("Access denied - symlink target outside allowed directories");
         }
@@ -69,7 +69,7 @@ async function validatePath(requestedPath) {
         try {
             const realParentPath = await fs.realpath(parentDir);
             const normalizedParent = normalizePath(realParentPath);
-            const isParentAllowed = allowedDirectories.some(dir => normalizedParent.startsWith(dir));
+            const isParentAllowed = allowedDirectories.some((dir) => normalizedParent.startsWith(dir));
             if (!isParentAllowed) {
                 throw new Error("Access denied - parent directory outside allowed directories");
             }
@@ -92,13 +92,16 @@ const WriteFileArgsSchema = z.object({
     content: z.string(),
 });
 const EditOperation = z.object({
-    oldText: z.string().describe('Text to search for - must match exactly'),
-    newText: z.string().describe('Text to replace with')
+    oldText: z.string().describe("Text to search for - must match exactly"),
+    newText: z.string().describe("Text to replace with"),
 });
 const EditFileArgsSchema = z.object({
     path: z.string(),
     edits: z.array(EditOperation),
-    dryRun: z.boolean().default(false).describe('Preview changes using git-style diff format')
+    dryRun: z
+        .boolean()
+        .default(false)
+        .describe("Preview changes using git-style diff format"),
 });
 const CreateDirectoryArgsSchema = z.object({
     path: z.string(),
@@ -116,7 +119,7 @@ const MoveFileArgsSchema = z.object({
 const SearchFilesArgsSchema = z.object({
     path: z.string(),
     pattern: z.string(),
-    excludePatterns: z.array(z.string()).optional().default([])
+    excludePatterns: z.array(z.string()).optional().default([]),
 });
 const GetFileInfoArgsSchema = z.object({
     path: z.string(),
@@ -155,8 +158,10 @@ async function searchFiles(rootPath, pattern, excludePatterns = []) {
                 await validatePath(fullPath);
                 // Check if path matches any exclude pattern
                 const relativePath = path.relative(rootPath, fullPath);
-                const shouldExclude = excludePatterns.some(pattern => {
-                    const globPattern = pattern.includes('*') ? pattern : `**/${pattern}/**`;
+                const shouldExclude = excludePatterns.some((pattern) => {
+                    const globPattern = pattern.includes("*")
+                        ? pattern
+                        : `**/${pattern}/**`;
                     return minimatch(relativePath, globPattern, { dot: true });
                 });
                 if (shouldExclude) {
@@ -180,17 +185,17 @@ async function searchFiles(rootPath, pattern, excludePatterns = []) {
 }
 // file editing and diffing utilities
 function normalizeLineEndings(text) {
-    return text.replace(/\r\n/g, '\n');
+    return text.replace(/\r\n/g, "\n");
 }
-function createUnifiedDiff(originalContent, newContent, filepath = 'file') {
+function createUnifiedDiff(originalContent, newContent, filepath = "file") {
     // Ensure consistent line endings for diff
     const normalizedOriginal = normalizeLineEndings(originalContent);
     const normalizedNew = normalizeLineEndings(newContent);
-    return createTwoFilesPatch(filepath, filepath, normalizedOriginal, normalizedNew, 'original', 'modified');
+    return createTwoFilesPatch(filepath, filepath, normalizedOriginal, normalizedNew, "original", "modified");
 }
 async function applyFileEdits(filePath, edits, dryRun = false) {
     // Read file content and normalize line endings
-    const content = normalizeLineEndings(await fs.readFile(filePath, 'utf-8'));
+    const content = normalizeLineEndings(await fs.readFile(filePath, "utf-8"));
     // Apply edits sequentially
     let modifiedContent = content;
     for (const edit of edits) {
@@ -202,8 +207,8 @@ async function applyFileEdits(filePath, edits, dryRun = false) {
             continue;
         }
         // Otherwise, try line-by-line matching with flexibility for whitespace
-        const oldLines = normalizedOld.split('\n');
-        const contentLines = modifiedContent.split('\n');
+        const oldLines = normalizedOld.split("\n");
+        const contentLines = modifiedContent.split("\n");
         let matchFound = false;
         for (let i = 0; i <= contentLines.length - oldLines.length; i++) {
             const potentialMatch = contentLines.slice(i, i + oldLines.length);
@@ -214,21 +219,23 @@ async function applyFileEdits(filePath, edits, dryRun = false) {
             });
             if (isMatch) {
                 // Preserve original indentation of first line
-                const originalIndent = contentLines[i].match(/^\s*/)?.[0] || '';
-                const newLines = normalizedNew.split('\n').map((line, j) => {
+                const originalIndent = contentLines[i].match(/^\s*/)?.[0] || "";
+                const newLines = normalizedNew.split("\n").map((line, j) => {
                     if (j === 0)
                         return originalIndent + line.trimStart();
                     // For subsequent lines, try to preserve relative indentation
-                    const oldIndent = oldLines[j]?.match(/^\s*/)?.[0] || '';
-                    const newIndent = line.match(/^\s*/)?.[0] || '';
+                    const oldIndent = oldLines[j]?.match(/^\s*/)?.[0] || "";
+                    const newIndent = line.match(/^\s*/)?.[0] || "";
                     if (oldIndent && newIndent) {
                         const relativeIndent = newIndent.length - oldIndent.length;
-                        return originalIndent + ' '.repeat(Math.max(0, relativeIndent)) + line.trimStart();
+                        return (originalIndent +
+                            " ".repeat(Math.max(0, relativeIndent)) +
+                            line.trimStart());
                     }
                     return line;
                 });
                 contentLines.splice(i, oldLines.length, ...newLines);
-                modifiedContent = contentLines.join('\n');
+                modifiedContent = contentLines.join("\n");
                 matchFound = true;
                 break;
             }
@@ -241,12 +248,12 @@ async function applyFileEdits(filePath, edits, dryRun = false) {
     const diff = createUnifiedDiff(content, modifiedContent, filePath);
     // Format diff with appropriate number of backticks
     let numBackticks = 3;
-    while (diff.includes('`'.repeat(numBackticks))) {
+    while (diff.includes("`".repeat(numBackticks))) {
         numBackticks++;
     }
-    const formattedDiff = `${'`'.repeat(numBackticks)}diff\n${diff}${'`'.repeat(numBackticks)}\n\n`;
+    const formattedDiff = `${"`".repeat(numBackticks)}diff\n${diff}${"`".repeat(numBackticks)}\n\n`;
     if (!dryRun) {
-        await fs.writeFile(filePath, modifiedContent, 'utf-8');
+        await fs.writeFile(filePath, modifiedContent, "utf-8");
     }
     return formattedDiff;
 }
@@ -390,7 +397,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const validPath = await validatePath(parsed.data.path);
                 await fs.writeFile(validPath, parsed.data.content, "utf-8");
                 return {
-                    content: [{ type: "text", text: `Successfully wrote to ${parsed.data.path}` }],
+                    content: [
+                        { type: "text", text: `Successfully wrote to ${parsed.data.path}` },
+                    ],
                 };
             }
             case "edit_file": {
@@ -412,7 +421,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const validPath = await validatePath(parsed.data.path);
                 await fs.mkdir(validPath, { recursive: true });
                 return {
-                    content: [{ type: "text", text: `Successfully created directory ${parsed.data.path}` }],
+                    content: [
+                        {
+                            type: "text",
+                            text: `Successfully created directory ${parsed.data.path}`,
+                        },
+                    ],
                 };
             }
             case "list_directory": {
@@ -441,7 +455,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     for (const entry of entries) {
                         const entryData = {
                             name: entry.name,
-                            type: entry.isDirectory() ? 'directory' : 'file'
+                            type: entry.isDirectory() ? "directory" : "file",
                         };
                         if (entry.isDirectory()) {
                             const subPath = path.join(currentPath, entry.name);
@@ -453,10 +467,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 }
                 const treeData = await buildTree(parsed.data.path);
                 return {
-                    content: [{
+                    content: [
+                        {
                             type: "text",
-                            text: JSON.stringify(treeData, null, 2)
-                        }],
+                            text: JSON.stringify(treeData, null, 2),
+                        },
+                    ],
                 };
             }
             case "move_file": {
@@ -468,7 +484,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const validDestPath = await validatePath(parsed.data.destination);
                 await fs.rename(validSourcePath, validDestPath);
                 return {
-                    content: [{ type: "text", text: `Successfully moved ${parsed.data.source} to ${parsed.data.destination}` }],
+                    content: [
+                        {
+                            type: "text",
+                            text: `Successfully moved ${parsed.data.source} to ${parsed.data.destination}`,
+                        },
+                    ],
                 };
             }
             case "search_files": {
@@ -479,7 +500,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const validPath = await validatePath(parsed.data.path);
                 const results = await searchFiles(validPath, parsed.data.pattern, parsed.data.excludePatterns);
                 return {
-                    content: [{ type: "text", text: results.length > 0 ? results.join("\n") : "No matches found" }],
+                    content: [
+                        {
+                            type: "text",
+                            text: results.length > 0 ? results.join("\n") : "No matches found",
+                        },
+                    ],
                 };
             }
             case "get_file_info": {
@@ -490,17 +516,24 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const validPath = await validatePath(parsed.data.path);
                 const info = await getFileStats(validPath);
                 return {
-                    content: [{ type: "text", text: Object.entries(info)
+                    content: [
+                        {
+                            type: "text",
+                            text: Object.entries(info)
                                 .map(([key, value]) => `${key}: ${value}`)
-                                .join("\n") }],
+                                .join("\n"),
+                        },
+                    ],
                 };
             }
             case "list_allowed_directories": {
                 return {
-                    content: [{
+                    content: [
+                        {
                             type: "text",
-                            text: `Allowed directories:\n${allowedDirectories.join('\n')}`
-                        }],
+                            text: `Allowed directories:\n${allowedDirectories.join("\n")}`,
+                        },
+                    ],
                 };
             }
             default:
@@ -521,6 +554,8 @@ async function runServer() {
     await server.connect(transport);
     console.error("Secure MCP Filesystem Server running on stdio");
     console.error("Allowed directories:", allowedDirectories);
+    // Output the server's process ID
+    console.error(`Process ID: ${process.pid}`);
 }
 runServer().catch((error) => {
     console.error("Fatal error running server:", error);

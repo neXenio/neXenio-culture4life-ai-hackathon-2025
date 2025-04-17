@@ -2,8 +2,8 @@
   "mcpServers": {
     "filesystem": {
       "command": "node",
-      "args": ["path/to/your/repo/filesystem/dist/index.js", "."],
-      "allowedDirectory": "path/to/your/repo"
+      "args": ["/Users/shinbeompyeon/code/ai-hackathon/neXenio-culture4life-ai-hackathon-2025/filesystem/dist/index.js", "."],
+      "allowedDirectory": "/Users/shinbeompyeon/code/ai-hackathon/neXenio-culture4life-ai-hackathon-2025"
     }
   },
   "llm": {
